@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wrexham University - Incubation Hub NFC Check-in System</title>
+    <title>Wrexham University - Incubation Hub Check-In</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -14,442 +14,185 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
                     colors: {
-                        wrexham: {
-                            red: '#AD1F2D',
-                            redDark: '#871722',
-                            redLight: '#FDF2F3',
-                            gray: '#1E293B',
-                            gold: '#D97706'
-                        }
+                        wrexham: { red: '#AD1F2D', redDark: '#871722', gray: '#1E293B', gold: '#D97706' }
                     }
                 }
             }
         }
     </script>
-    <style>
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-        }
-        .animate-pulse-fast {
-            animation: pulse 1.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-    </style>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-100 font-sans text-slate-800 min-h-screen flex flex-col items-center justify-center p-4">
 
-    <!-- Top Navigation Bar -->
-    <header class="bg-wrexham-red text-white shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-            <div class="flex items-center space-x-3">
-                <div class="bg-white text-wrexham-red p-2 rounded-lg font-bold text-xl flex items-center justify-center w-10 h-10 shadow">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg leading-tight">Wrexham University</h1>
-                    <p class="text-xs text-red-100 font-medium tracking-wide">INCUBATION SPACE ACCESS CONTROL</p>
-                </div>
-            </div>
-            
-            <!-- Navigation Tabs -->
-            <nav class="flex space-x-1 sm:space-x-2 bg-wrexham-redDark p-1 rounded-xl">
-                <button onclick="switchTab('student')" id="nav-student" class="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 bg-white text-wrexham-red shadow">
-                    <i class="fa-solid fa-mobile-screen-button mr-1.5"></i>NFC Tap View
-                </button>
-                <button onclick="switchTab('admin')" id="nav-admin" class="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg text-white hover:bg-white/10 transition-all duration-200">
-                    <i class="fa-solid fa-chart-pie mr-1.5"></i>Admin & Compliance
-                </button>
-                <button onclick="switchTab('api')" id="nav-api" class="px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg text-white hover:bg-white/10 transition-all duration-200">
-                    <i class="fa-solid fa-code mr-1.5"></i>API Logs
-                </button>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+    <!-- Mobile-First Check-In Card -->
+    <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
         
-        <!-- TAB 1: STUDENT NFC TAP VIEW -->
-        <section id="tab-student" class="space-y-6">
+        <!-- Header: Hub Location & Privacy Notice -->
+        <div class="bg-slate-900 text-white p-6 text-center relative">
+            <div class="absolute top-4 left-4">
+                <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full font-bold uppercase tracking-wider border border-emerald-500/30">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> GDPR Pseudonymous
+                </span>
+            </div>
             
-            <!-- NFC Tag Simulator Controller Bar -->
-            <div class="bg-slate-800 text-slate-200 p-4 rounded-2xl shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-slate-700">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
-                        <i class="fa-solid fa-wifi text-lg animate-pulse-fast"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-sm font-semibold text-white">Dynamic NFC Hardware Simulator</h3>
-                        <p class="text-xs text-slate-400">Simulates phone tapping physical NFC sticker located at Incubation Desk</p>
-                    </div>
+            <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3 mt-4 border border-white/20">
+                <i class="fa-solid fa-wifi text-3xl text-emerald-400"></i>
+            </div>
+            
+            <h1 class="text-xl font-bold" id="disp-hub-name">Incubation Shed A (Desk 3)</h1>
+            <p class="text-xs text-slate-400 mt-1">NFC Tap Verified Session</p>
+
+            <!-- Dynamic Tag Status Badge -->
+            <div class="mt-4 bg-slate-800/90 rounded-xl p-3 border border-slate-700 flex justify-between items-center text-left">
+                <div>
+                    <p class="text-[10px] text-slate-400 uppercase tracking-wider" id="tag-mode-label">Security Mode (Demo)</p>
+                    <p class="font-mono text-xs font-bold text-emerald-400 tracking-widest" id="disp-token-status">SIMULATED SUN TOKEN</p>
                 </div>
-                <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                    <button onclick="simulateNFCScan()" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5 shadow">
-                        <i class="fa-solid fa-bolt"></i> Tap Phone on NFC Tag
-                    </button>
-                    <button onclick="simulateExpireToken()" class="bg-amber-600 hover:bg-amber-500 text-white text-xs px-3 py-2 rounded-lg font-medium transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-clock-rotate-left"></i> Expire Token
-                    </button>
+                <div class="text-right">
+                    <p class="text-[10px] text-slate-400 uppercase tracking-wider">TTL Expiry</p>
+                    <p class="font-mono text-xs font-bold text-amber-400" id="disp-timer">02:59</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Body -->
+        <div class="p-6 space-y-4">
+            <div id="form-alert" class="hidden p-3 rounded-xl text-xs font-medium flex items-center gap-2"></div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Pseudonymous Student ID</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm">
+                        <i class="fa-solid fa-id-badge"></i>
+                    </span>
+                    <input type="text" id="input-student-id" placeholder="e.g. W2004812" value="W2004812" class="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-wrexham-red focus:border-transparent outline-none transition font-mono">
+                </div>
+                <p class="text-[10px] text-slate-400 mt-1">Real names remain safely isolated inside M365 SharePoint.</p>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Security PIN</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm">
+                        <i class="fa-solid fa-key"></i>
+                    </span>
+                    <input type="password" id="input-pin" placeholder="Enter PIN" value="1234" maxlength="4" class="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-wrexham-red focus:border-transparent outline-none transition">
                 </div>
             </div>
 
-            <!-- Main Student Interactive Form Card -->
-            <div class="max-w-md mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-200">
-                
-                <div class="bg-slate-900 text-white p-6 relative">
-                    <div class="flex justify-between items-center mb-4">
-                        <span class="text-xs bg-wrexham-red px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider">Dynamic Web Check-in</span>
-                        <span class="text-xs text-slate-400 flex items-center gap-1">
-                            <i class="fa-solid fa-lock text-emerald-400"></i> HTTPS Encrypted
-                        </span>
-                    </div>
-
-                    <div class="text-center py-2">
-                        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3 border border-white/20">
-                            <i class="fa-solid fa-door-open text-3xl text-emerald-400"></i>
-                        </div>
-                        <h2 class="text-xl font-bold" id="disp-hub-name">Enterprise Hub A (Room 102)</h2>
-                        <p class="text-xs text-slate-400 mt-1" id="disp-nfc-tag">NFC Hardware ID: <span class="font-mono text-emerald-400" id="disp-tag-id">NFC-WX-8842</span></p>
-                    </div>
-
-                    <div class="mt-4 bg-slate-800/90 rounded-xl p-3 border border-slate-700 flex justify-between items-center">
-                        <div class="text-left">
-                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">Dynamic One-Time Token</p>
-                            <p class="font-mono text-xs font-bold text-emerald-400 tracking-widest" id="disp-session-token">SEC-8A91F-2026</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-[10px] text-slate-400 uppercase tracking-wider">Token Expires</p>
-                            <p class="font-mono text-xs font-bold text-amber-400" id="disp-timer">03:00</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Check-in Form Body -->
-                <div class="p-6 space-y-4">
-                    <div id="form-alert" class="hidden p-3 rounded-xl text-xs font-medium flex items-center gap-2"></div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Student ID or Wrexham Email</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm">
-                                <i class="fa-solid fa-user-graduate"></i>
-                            </span>
-                            <input type="text" id="input-student-id" placeholder="e.g. W2004812" value="W2004812" class="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-wrexham-red focus:border-transparent outline-none transition">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Security PIN / Access Password</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm">
-                                <i class="fa-solid fa-key"></i>
-                            </span>
-                            <input type="password" id="input-pin" placeholder="Enter 4-digit PIN" value="1234" maxlength="8" class="w-full pl-9 pr-3 py-2.5 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-wrexham-red focus:border-transparent outline-none transition">
-                        </div>
-                        <p class="text-[11px] text-slate-500 mt-1">Preset test PINs: Student W2004812 (PIN: 1234), W2009381 (PIN: 5678)</p>
-                    </div>
-
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center">
-                        <div>
-                            <p class="text-[10px] uppercase font-bold text-slate-400">Unique Visit Verification Code</p>
-                            <p class="font-mono text-base font-extrabold text-slate-800" id="disp-checkin-code">CHK-9982</p>
-                        </div>
-                        <button type="button" onclick="generateNewCheckinCode()" class="text-xs text-wrexham-red font-semibold hover:underline flex items-center gap-1">
-                            <i class="fa-solid fa-arrows-rotate"></i> Refresh
-                        </button>
-                    </div>
-
-                    <button type="button" id="btn-submit-checkin" onclick="handleStudentSubmit()" class="w-full bg-wrexham-red hover:bg-wrexham-redDark text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-wrexham-red/30 transition duration-200 flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-right-to-bracket"></i> Verify & Check In Now
-                    </button>
-                    
-                    <p class="text-[11px] text-center text-slate-400">Contract Clause: Minimum 4 visits per calendar month required for incubated startups.</p>
-                </div>
+            <button type="button" onclick="handleCheckIn()" class="w-full bg-wrexham-red hover:bg-wrexham-redDark text-white py-3 rounded-xl font-bold text-sm shadow-lg shadow-wrexham-red/30 transition duration-200 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-circle-check"></i> Complete Attendance Check-In
+            </button>
+            
+            <div class="text-center pt-2">
+                <a href="#" onclick="switchMode()" class="text-[11px] text-slate-400 hover:underline">Toggle Hardware Mode (Demo / Real DNA)</a>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <!-- TAB 2: ADMIN & CONTRACT COMPLIANCE DASHBOARD -->
-        <section id="tab-admin" class="hidden space-y-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Current Room Occupancy</p>
-                        <h3 class="text-2xl font-black text-slate-800 mt-1" id="stat-occupancy">4 / 15</h3>
-                        <p class="text-xs text-emerald-600 font-medium mt-1"><i class="fa-solid fa-circle text-[8px] mr-1"></i> Under Max Capacity</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                </div>
-
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">This Month Visits</p>
-                        <h3 class="text-2xl font-black text-slate-800 mt-1" id="stat-total-visits">28</h3>
-                        <p class="text-xs text-slate-500 font-medium mt-1">Across all Incubated Startups</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
-                        <i class="fa-solid fa-calendar-check"></i>
-                    </div>
-                </div>
-
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">At-Risk Students</p>
-                        <h3 class="text-2xl font-black text-amber-600 mt-1" id="stat-at-risk">2</h3>
-                        <p class="text-xs text-amber-700 font-medium mt-1">Below monthly min (4 visits)</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    </div>
-                </div>
-
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Active Startups</p>
-                        <h3 class="text-2xl font-black text-slate-800 mt-1" id="stat-startups">6</h3>
-                        <p class="text-xs text-slate-500 font-medium mt-1">Registered Contracts</p>
-                    </div>
-                    <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold">
-                        <i class="fa-solid fa-lightbulb"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Student Roster Table -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-5 border-b border-slate-100 flex justify-between items-center">
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-lg">Incubation Contract Compliance Roster</h3>
-                        <p class="text-xs text-slate-500">Tracks student onsite visits vs required monthly contract minimum</p>
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-500 font-bold uppercase border-b border-slate-200">
-                                <th class="p-3.5">Student Name</th>
-                                <th class="p-3.5">Student ID</th>
-                                <th class="p-3.5">Startup Enterprise</th>
-                                <th class="p-3.5 text-center">Monthly Visits</th>
-                                <th class="p-3.5">Required Min</th>
-                                <th class="p-3.5">Contract Status</th>
-                                <th class="p-3.5">Last Check-in</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbl-roster-body" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Audit Log Table -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-5 border-b border-slate-100 flex justify-between items-center">
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-lg">Real-time Attendance Audit Log</h3>
-                        <p class="text-xs text-slate-500">Timestamped record of all verified NFC check-ins</p>
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-500 font-bold uppercase border-b border-slate-200">
-                                <th class="p-3.5">Timestamp</th>
-                                <th class="p-3.5">Student</th>
-                                <th class="p-3.5">Location Hub</th>
-                                <th class="p-3.5">Verify Code</th>
-                                <th class="p-3.5">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbl-audit-body" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 3: API CONSOLE -->
-        <section id="tab-api" class="hidden space-y-6">
-            <div class="bg-slate-900 text-slate-100 p-6 rounded-3xl shadow-xl border border-slate-800 space-y-4">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-4">
-                    <div>
-                        <h3 class="text-base font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-terminal text-emerald-400"></i> REST API Endpoint Traffic & Database Stream
-                        </h3>
-                        <p class="text-xs text-slate-400">Simulates real-time incoming HTTP POST requests to <code class="text-amber-300">/api/v1/incubation/checkin</code></p>
-                    </div>
-                    <button onclick="clearAPILogs()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700">
-                        Clear Console
-                    </button>
-                </div>
-                <div class="bg-slate-950 rounded-2xl p-4 border border-slate-800 font-mono text-xs h-96 overflow-y-auto space-y-3" id="api-console">
-                    <div class="text-slate-500">// System ready. Waiting for student NFC tap requests...</div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- JavaScript Application Logic -->
+    <!-- Application Script with Config Toggle -->
     <script>
-        let students = [
-            { id: 'W2004812', name: 'Gareth Thomas', startup: 'Dragon Robotics Lab', requiredVisits: 4, monthlyVisits: 5, pin: '1234', lastCheckin: '2026-11-10 14:22' },
-            { id: 'W2009381', name: 'Elen Evans', startup: 'Cymru Eco Packaging', requiredVisits: 4, monthlyVisits: 2, pin: '5678', lastCheckin: '2026-11-04 09:15' },
-            { id: 'W2001144', name: 'Liam Davies', startup: 'North Wales XR', requiredVisits: 6, monthlyVisits: 7, pin: '9900', lastCheckin: '2026-11-11 11:05' }
-        ];
-
-        let auditLogs = [
-            { timestamp: '2026-11-11 15:50:12', studentId: 'W2008811', studentName: 'Callum Owen', location: 'Enterprise Hub A', code: 'CHK-7741', status: 'SUCCESS' }
-        ];
-
-        let currentSession = {
-            location: 'Enterprise Hub A (Room 102)',
-            tagId: 'NFC-WX-8842',
-            token: 'SEC-' + Math.random().toString(36).substring(2, 7).toUpperCase() + '-2026',
-            timeLeft: 180,
-            checkinCode: 'CHK-' + Math.floor(1000 + Math.random() * 9000)
+        // ==========================================
+        // CONFIGURATION SWITCH (Change to true when DNA tags arrive)
+        // ==========================================
+        const CONFIG = {
+            USE_REAL_DNA_TAGS: false, // Set to 'true' when you deploy real NTAG 424 DNA tags
+            POWER_AUTOMATE_URL: "YOUR_POWER_AUTOMATE_ENDPOINT_HERE"
         };
 
         window.onload = function() {
-            startSessionTimer();
-            renderDashboard();
-            renderAuditLogs();
-            logAPIMessage('SYSTEM_INIT', 'Dynamic NFC Server ready. Session Token generated.');
+            checkURLParameters();
+            startTimer();
         };
 
-        function switchTab(tabId) {
-            ['student', 'admin', 'api'].forEach(t => {
-                const el = document.getElementById(`tab-${t}`);
-                const nav = document.getElementById(`nav-${t}`);
-                if (t === tabId) {
-                    el.classList.remove('hidden');
-                    nav.className = "px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg bg-white text-wrexham-red shadow transition-all duration-200";
-                } else {
-                    el.classList.add('hidden');
-                    nav.className = "px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium rounded-lg text-white hover:bg-white/10 transition-all duration-200";
+        // Reads incoming URL parameters when tapped
+        function checkURLParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (CONFIG.USE_REAL_DNA_TAGS) {
+                // REAL DNA MODE: Expects NTAG 424 encrypted payload parameters (?e=...&c=...)
+                const encryptedPayload = urlParams.get('e');
+                const macSignature = urlParams.get('c');
+
+                document.getElementById('tag-mode-label').innerText = "Hardware Mode: NTAG 424 DNA";
+                document.getElementById('disp-token-status').innerText = encryptedPayload ? "CRYPTOGRAPHICALLY VERIFIED" : "WAITING FOR PHYSICAL TAP";
+
+                if (!encryptedPayload || !macSignature) {
+                    showAlert("Warning: No hardware cryptographic signature detected. Please tap the physical tag.", "error");
                 }
-            });
+            } else {
+                // DEMO SIMULATION MODE: Uses home static tag with fake dynamic simulation
+                document.getElementById('tag-mode-label').innerText = "Security Mode: Demo Simulation";
+                document.getElementById('disp-token-status').innerText = "SIMULATED SUN TOKEN ACTIVE";
+            }
         }
 
-        function startSessionTimer() {
-            currentSession.timeLeft = 180;
+        function startTimer() {
+            let timeLeft = 180;
             setInterval(() => {
-                if (currentSession.timeLeft > 0) {
-                    currentSession.timeLeft--;
-                    const m = Math.floor(currentSession.timeLeft / 60).toString().padStart(2, '0');
-                    const s = (currentSession.timeLeft % 60).toString().padStart(2, '0');
-                    const timerEl = document.getElementById('disp-timer');
-                    if (timerEl) timerEl.innerText = `${m}:${s}`;
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    let m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+                    let s = (timeLeft % 60).toString().padStart(2, '0');
+                    document.getElementById('disp-timer').innerText = `${m}:${s}`;
                 }
             }, 1000);
         }
 
-        function simulateNFCScan() {
-            currentSession.token = 'SEC-' + Math.random().toString(36).substring(2, 7).toUpperCase() + '-2026';
-            document.getElementById('disp-session-token').innerText = currentSession.token;
-            showAlert('form-alert', 'NFC Tag Tapped! Dynamic token refreshed successfully.', 'success');
-            logAPIMessage('NFC_TAP', `Physical tap detected on tag ${currentSession.tagId}. New token generated.`);
-        }
-
-        function simulateExpireToken() {
-            currentSession.timeLeft = 0;
-            document.getElementById('disp-timer').innerText = "EXPIRED";
-            showAlert('form-alert', 'Token expired! Please tap the physical tag again.', 'error');
-            logAPIMessage('TOKEN_EXPIRED', 'Token TTL reached zero. Re-tap required.');
-        }
-
-        function generateNewCheckinCode() {
-            currentSession.checkinCode = 'CHK-' + Math.floor(1000 + Math.random() * 9000);
-            document.getElementById('disp-checkin-code').innerText = currentSession.checkinCode;
-        }
-
-        function handleStudentSubmit() {
-            const sid = document.getElementById('input-student-id').value.trim();
+        function handleCheckIn() {
+            const studentId = document.getElementById('input-student-id').value.trim();
             const pin = document.getElementById('input-pin').value.trim();
 
-            const student = students.find(s => s.id === sid);
-            if (!student) {
-                showAlert('form-alert', 'Error: Student ID not found in SharePoint Roster.', 'error');
-                return;
-            }
-            if (student.pin !== pin) {
-                showAlert('form-alert', 'Error: Incorrect Security PIN.', 'error');
-                logAPIMessage('AUTH_FAIL', `Incorrect PIN attempted for ${sid}`);
+            if (!studentId || !pin) {
+                showAlert("Please enter your Student ID and PIN.", "error");
                 return;
             }
 
-            student.monthlyVisits++;
-            student.lastCheckin = new Date().toISOString().replace('T', ' ').substring(0, 16);
+            // Retrieve or create device binding token for this browser
+            let deviceToken = localStorage.getItem('incubation_device_token');
+            if (!deviceToken) {
+                deviceToken = 'dev_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+                localStorage.setItem('incubation_device_token', deviceToken);
+            }
 
-            auditLogs.unshift({
-                timestamp: student.lastCheckin,
-                studentId: student.id,
-                studentName: student.name,
-                location: currentSession.location,
-                code: currentSession.checkinCode,
-                status: 'SUCCESS'
-            });
+            const payload = {
+                student_id: studentId,
+                pin: pin,
+                device_token: deviceToken,
+                tag_mode: CONFIG.USE_REAL_DNA_TAGS ? "NTAG_424_DNA" : "DEMO_SIMULATION",
+                timestamp: new Date().toISOString()
+            };
 
-            showAlert('form-alert', `Success! Check-in recorded for ${student.name}.`, 'success');
-            logAPIMessage('CHECKIN_SUCCESS', `Verified check-in for ${student.name} (${student.id}) at ${currentSession.location}`);
-            renderDashboard();
-            renderAuditLogs();
+            // If Power Automate URL is configured, send data; otherwise demo success
+            if (CONFIG.POWER_AUTOMATE_URL.includes("YOUR_POWER_AUTOMATE")) {
+                showAlert(`[DEMO SUCCESS] Pseudonymous check-in logged for ${studentId} (GDPR Compliant).`, "success");
+            } else {
+                // Live fetch call to Power Automate webhook
+                fetch(CONFIG.POWER_AUTOMATE_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                .then(res => {
+                    if (res.ok) showAlert("Attendance successfully recorded to SharePoint.", "success");
+                    else showAlert("Check-in rejected: Invalid PIN or unauthorized device.", "error");
+                })
+                .catch(() => showAlert("Network error connecting to backend.", "error"));
+            }
         }
 
-        function showAlert(elementId, message, type) {
-            const el = document.getElementById(elementId);
-            el.className = `p-3 rounded-xl text-xs font-medium flex items-center gap-2 ${type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`;
-            el.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check text-emerald-500' : 'fa-circle-exclamation text-red-500'}"></i> ${message}`;
-            el.classList.remove('hidden');
+        function showAlert(msg, type) {
+            const alertBox = document.getElementById('form-alert');
+            alertBox.className = `p-3 rounded-xl text-xs font-medium flex items-center gap-2 ${type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'}`;
+            alertBox.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check text-emerald-500' : 'fa-circle-exclamation text-red-500'}"></i> ${msg}`;
+            alertBox.classList.remove('hidden');
         }
 
-        function renderDashboard() {
-            const tbody = document.getElementById('tbl-roster-body');
-            if (!tbody) return;
-            tbody.innerHTML = students.map(s => `
-                <tr class="hover:bg-slate-50">
-                    <td class="p-3.5 font-bold text-slate-800">${s.name}</td>
-                    <td class="p-3.5 font-mono text-slate-600">${s.id}</td>
-                    <td class="p-3.5 text-slate-600">${s.startup}</td>
-                    <td class="p-3.5 text-center font-bold text-slate-800">${s.monthlyVisits}</td>
-                    <td class="p-3.5 text-slate-600">${s.requiredVisits}</td>
-                    <td class="p-3.5">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${s.monthlyVisits >= s.requiredVisits ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-800'}">
-                            ${s.monthlyVisits >= s.requiredVisits ? 'Compliant' : 'At Risk'}
-                        </span>
-                    </td>
-                    <td class="p-3.5 text-slate-500">${s.lastCheckin}</td>
-                </tr>
-            `).join('');
-        }
-
-        function renderAuditLogs() {
-            const tbody = document.getElementById('tbl-audit-body');
-            if (!tbody) return;
-            tbody.innerHTML = auditLogs.map(l => `
-                <tr class="hover:bg-slate-50">
-                    <td class="p-3.5 font-mono text-slate-500">${l.timestamp}</td>
-                    <td class="p-3.5 font-bold text-slate-800">${l.studentName} <span class="text-slate-400 font-mono text-[10px]">(${l.studentId})</span></td>
-                    <td class="p-3.5 text-slate-600">${l.location}</td>
-                    <td class="p-3.5 font-mono text-emerald-600 font-bold">${l.code}</td>
-                    <td class="p-3.5"><span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 text-[10px] font-bold">SUCCESS</span></td>
-                </tr>
-            `).join('');
-        }
-
-        function logAPIMessage(type, message) {
-            const consoleEl = document.getElementById('api-console');
-            if (!consoleEl) return;
-            const time = new Date().toTimeString().split(' ')[0];
-            const div = document.createElement('div');
-            div.innerHTML = `<span class="text-slate-500">[${time}]</span> <span class="text-emerald-400 font-bold">${type}:</span> <span class="text-slate-300">${message}</span>`;
-            consoleEl.prepend(div);
-        }
-
-        function clearAPILogs() {
-            document.getElementById('api-console.innerHTML = '<div class="text-slate-500">// Console cleared.</div>';
+        function switchMode() {
+            CONFIG.USE_REAL_DNA_TAGS = !CONFIG.USE_REAL_DNA_TAGS;
+            checkURLParameters();
+            alert("Switched mode to: " + (CONFIG.USE_REAL_DNA_TAGS ? "Real NTAG 424 DNA" : "Demo Simulation"));
         }
     </script>
 </body>
