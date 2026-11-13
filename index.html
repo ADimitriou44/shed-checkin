@@ -100,11 +100,35 @@
             USE_REAL_DNA_TAGS: false, // Set to 'true' when you deploy real NTAG 424 DNA tags
             POWER_AUTOMATE_URL: "https://333d8341f4afebe7a994c2628fceda.a8.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/18/workflows/edab13c41e31439db16997a0c46ce675/triggers/manual/paths/invoke?api-version=1"
         };
+        
+        // Global variable to hold current location read from NFC tag
+        let currentShedLocation = "Default Incubation Hub";
 
+        
         window.onload = function() {
             checkURLParameters();
+            parseNfcUrlParameters();
             startTimer();
         };
+
+        function parseNfcUrlParameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const shedParam = urlParams.get('shed');
+        
+            if (shedParam) {
+                // Clean up formatting (e.g. "Shed_A" becomes "Shed A")
+                currentShedLocation = shedParam.replace(/_/g, ' ');
+                
+                // Update UI display dynamically
+                const hubTitleEl = document.getElementById('disp-hub-name');
+                if (hubTitleEl) {
+                    hubTitleEl.innerText = `Incubation Space: ${currentShedLocation}`;
+                }
+            } else {
+                // Fallback if someone visits the page directly without scanning a tag
+                currentShedLocation = "General Check-In Portal";
+            }
+        }
 
         // Reads incoming URL parameters when tapped
         function checkURLParameters() {
@@ -160,6 +184,7 @@
                 student_id: studentId,
                 pin: pin,
                 device_token: deviceToken,
+                shed_location: currentShedLocation, // <--- Dynamic location from NFC tag
                 tag_mode: CONFIG.USE_REAL_DNA_TAGS ? "NTAG_424_DNA" : "DEMO_SIMULATION",
                 timestamp: new Date().toISOString()
             };
